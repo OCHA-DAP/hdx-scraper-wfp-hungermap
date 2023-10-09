@@ -1,0 +1,2 @@
+# Collector specific configuration
+country_url: "https://api.hungermapdata.org/v1/foodsecurity/country"
