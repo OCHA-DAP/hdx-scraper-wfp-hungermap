@@ -126,7 +126,7 @@ class HungerMaps:
             logger.info(f"No subnational data for {countryname}!")
         return rows, earliest_date, latest_date
 
-    def generate_dataset(self, countryiso3, rows, earliest_date, latest_date):
+    def generate_dataset_and_showcase(self, countryiso3, rows, earliest_date, latest_date):
         name = f"wfp hungermap data for {countryiso3}"
         countryname = Country.get_country_name_from_iso3(countryiso3)
         title = f"{countryname} - HungerMap data"
@@ -150,4 +150,16 @@ class HungerMaps:
         filename = f"{slugified_name}.csv"
         resourcedata = {"name": filename, "description": title}
         dataset.generate_resource_from_rows(self.folder, filename, rows, resourcedata)
-        return dataset
+
+        showcase = Showcase(
+            {
+                "name": f"{slugified_name}-showcase",
+                "title": f"{title} showcase",
+                "notes": f"HungerMap LIVE",
+                "url": "https://hungermap.wfp.org/",
+                "image_url": "https://www.wfp.org/sites/default/files/2020-11/migrated-story-hero-images/1%2AwHonqWsryfHjnj3FRQS_xA.png",
+            }
+        )
+        showcase.add_tags(tags)
+
+        return dataset, showcase

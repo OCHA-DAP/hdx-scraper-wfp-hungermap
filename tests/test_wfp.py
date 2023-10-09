@@ -73,9 +73,8 @@ class TestHungerMaps:
                 )
                 today = parse_date("2023-10-09")
                 hungermaps = HungerMaps(configuration, retriever, folder, today)
-                update, countries = hungermaps.get_country_data(
-                    {"DEFAULT": parse_date("2022-01-01")}
-                )
+                state_dict = {"DEFAULT": parse_date("2022-01-01")}
+                update, countries = hungermaps.get_country_data(state_dict)
                 assert update is True
                 assert len(countries) == 88
 
@@ -84,7 +83,7 @@ class TestHungerMaps:
                 assert earliest_date == parse_date("2022-10-09")
                 assert latest_date == parse_date("2023-10-08")
 
-                dataset = hungermaps.generate_dataset(
+                dataset, showcase = hungermaps.generate_dataset_and_showcase(
                     "AFG", rows, earliest_date, latest_date
                 )
                 assert dataset == {
@@ -127,3 +126,116 @@ class TestHungerMaps:
                 expected_path = join(fixtures, filename)
                 actual_path = join(folder, filename)
                 assert_files_same(expected_path, actual_path)
+
+                assert showcase == {
+                    "name": "wfp-hungermap-data-for-afg-showcase",
+                    "title": "Afghanistan - HungerMap data showcase",
+                    "notes": "HungerMap LIVE",
+                    "url": "https://hungermap.wfp.org/",
+                    "image_url": "https://www.wfp.org/sites/default/files/2020-11/migrated-story-hero-images/1%2AwHonqWsryfHjnj3FRQS_xA.png",
+                    "tags": [
+                        {
+                            "name": "hxl",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
+                            "name": "indicators",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                        {
+                            "name": "food security",
+                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
+                        },
+                    ],
+                }
+                assert state_dict == {
+                    "DEFAULT": datetime(2022, 1, 1, 0, 0, tzinfo=timezone.utc),
+                    "AFG": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "DZA": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "AGO": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "ARM": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "BGD": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "BEN": datetime(2022, 1, 11, 0, 0, tzinfo=timezone.utc),
+                    "BTN": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "BOL": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "BWA": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "BFA": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "BDI": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "KHM": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "CMR": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "CPV": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "CAF": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "TCD": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "COL": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "COM": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "COG": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "CIV": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "COD": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "DJI": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "DOM": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "ECU": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SLV": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "ETH": datetime(2023, 6, 12, 0, 0, tzinfo=timezone.utc),
+                    "GMB": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "GHA": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "GTM": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "GNB": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "GIN": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "HTI": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "HND": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "IRN": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "IRQ": datetime(2023, 5, 7, 0, 0, tzinfo=timezone.utc),
+                    "JOR": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "KEN": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "KGZ": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "LAO": datetime(2023, 7, 26, 0, 0, tzinfo=timezone.utc),
+                    "LBN": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "LSO": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "LBR": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "LBY": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "MDG": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "MWI": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "MLI": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "MRT": datetime(2023, 7, 13, 0, 0, tzinfo=timezone.utc),
+                    "MDA": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "MNG": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "MAR": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "MOZ": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "NAM": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "NPL": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "NER": datetime(2023, 10, 7, 0, 0, tzinfo=timezone.utc),
+                    "NGA": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "PER": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "RWA": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "STP": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SLE": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "SLB": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SOM": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "LKA": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SWZ": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SYR": datetime(2023, 10, 2, 0, 0, tzinfo=timezone.utc),
+                    "TJK": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "TLS": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "TGO": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "TUN": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "UGA": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "UKR": datetime(2023, 9, 3, 0, 0, tzinfo=timezone.utc),
+                    "TZA": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "UZB": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "VNM": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "YEM": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "ZMB": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "ZWE": datetime(2023, 10, 9, 0, 0, tzinfo=timezone.utc),
+                    "IDN": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "MMR": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "PNG": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "PHL": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "FJI": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "VUT": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SEN": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "PSE": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SDN": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "EGY": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "SSD": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                    "CUB": datetime(2023, 10, 8, 0, 0, tzinfo=timezone.utc),
+                }

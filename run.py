@@ -4,6 +4,7 @@ Top level script. Calls other functions that generate datasets that this script 
 
 """
 import logging
+from copy import deepcopy
 from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
@@ -38,7 +39,7 @@ def main(save: bool = False, use_saved: bool = False) -> None:
         State.dates_str_to_country_date_dict,
         State.country_date_dict_to_dates_str,
     ) as state:
-        state_dict = state.get()
+        state_dict = deepcopy(state.get())
         with wheretostart_tempdir_batch(lookup) as info:
             folder = info["folder"]
             with Download() as downloader:
@@ -57,7 +58,7 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                         rows, earliest_date, latest_date = hungermaps.get_rows(
                             countryiso3
                         )
-                        dataset = hungermaps.generate_dataset(
+                        dataset, showcase = hungermaps.generate_dataset_and_showcase(
                             countryiso3, rows, earliest_date, latest_date
                         )
                         if not dataset:
@@ -74,9 +75,10 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                             updated_by_script=updated_by_script,
                             batch=info["batch"],
                         )
-
-
-#        state.set(state_dict)
+                        if showcase:
+                            showcase.create_in_hdx()
+                            showcase.add_dataset(dataset)
+        state.set(state_dict)
 
 
 if __name__ == "__main__":
