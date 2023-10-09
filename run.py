@@ -17,8 +17,8 @@ from wfp import HungerMaps
 
 logger = logging.getLogger(__name__)
 
-lookup = "hdx-scraper-wfp-hungermaps"
-updated_by_script = "HDX Scraper: WFP Hunger Maps"
+lookup = "hdx-scraper-wfp-hungermap"
+updated_by_script = "HDX Scraper: WFP HungerMap"
 
 
 def main(save: bool = False, use_saved: bool = False) -> None:
