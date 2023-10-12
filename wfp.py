@@ -13,7 +13,7 @@ from hdx.data.dataset import Dataset
 from hdx.data.showcase import Showcase
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
-from hdx.utilities.dateparse import default_date, default_enddate, parse_date
+from hdx.utilities.dateparse import parse_date, default_enddate, default_date
 from slugify import slugify
 
 logger = logging.getLogger(__name__)
@@ -46,20 +46,34 @@ class HungerMaps:
         self.today = today
         self.countries_data = {}
 
-    def get_country_data(self, state):
-        url = self.configuration["country_url"]
-        json = self.retriever.download_json(url)
+    def get_country_data(self, state, max_days_ago=365):
+        try:
+            country_url = self.configuration["country_url"]
+            json = self.retriever.download_json(country_url)
 
-        update = False
-        for country in json["countries"]:
-            countryiso3 = country["country"]["iso3"]
-            date = parse_date(country["date"])
-            if date > state.get(countryiso3, state["DEFAULT"]):
-                state[countryiso3] = date
-                self.countries_data[countryiso3] = country
-                update = True
-        countries = [{"iso3": countryiso3} for countryiso3 in self.countries_data]
-        return update, countries
+            for country in json["countries"]:
+                countryiso3 = country["country"]["iso3"]
+                date = parse_date(country["date"])
+                if date > state.get(countryiso3, state["DEFAULT"]):
+                    state[countryiso3] = date
+                    self.countries_data[countryiso3] = [country]
+            if self.countries_data:
+                for days_ago in range(1, max_days_ago, 1):
+                    url = f"{country_url}?days_ago={days_ago}"
+                    json = self.retriever.download_json(url)
+                    for country in json["countries"]:
+                        countryiso3 = country["country"]["iso3"]
+                        current_rows = self.countries_data.get(countryiso3)
+                        if not current_rows:
+                            continue
+                        current_date = current_rows[-1]["date"]
+                        date = country["date"]
+                        if date != current_date:
+                            self.countries_data[countryiso3].append(country)
+        except DownloadError:
+            logger.info(f"No national data available!")
+
+        return [{"iso3": countryiso3} for countryiso3 in self.countries_data]
 
     def get_rows(self, countryiso3):
         rows = [hxltags]
@@ -110,8 +124,8 @@ class HungerMaps:
                 "market access prevalence": market_access["prevalence"],
             }
 
-        country_data = self.countries_data[countryiso3]
-        rows.append(get_row(country_data))
+        country_rows = self.countries_data[countryiso3]
+        rows.extend([get_row(country_row) for country_row in country_rows])
         url = self.configuration["country_url"]
         today = self.today.date().isoformat()
         one_year_ago = (self.today - relativedelta(years=1)).date().isoformat()

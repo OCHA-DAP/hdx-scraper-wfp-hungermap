@@ -48,36 +48,29 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                 )
                 today = now_utc()
                 hungermaps = HungerMaps(configuration, retriever, folder, today)
-                update, countries = hungermaps.get_country_data(state_dict)
+                countries = hungermaps.get_country_data(state_dict)
                 logger.info(f"Number of datasets: {len(countries)}")
-                if update:
-                    for _, countryinfo in progress_storing_folder(
-                        info, countries, "iso3"
-                    ):
-                        countryiso3 = countryinfo["iso3"]
-                        rows, earliest_date, latest_date = hungermaps.get_rows(
-                            countryiso3
-                        )
-                        dataset, showcase = hungermaps.generate_dataset_and_showcase(
-                            countryiso3, rows, earliest_date, latest_date
-                        )
-                        if not dataset:
-                            continue
-                        dataset.update_from_yaml(
-                            join("config", "hdx_dataset_static.yml")
-                        )
-                        # ensure markdown has line breaks
-                        dataset["notes"] = dataset["notes"].replace("\n", "  \n")
+                for _, countryinfo in progress_storing_folder(info, countries, "iso3"):
+                    countryiso3 = countryinfo["iso3"]
+                    rows, earliest_date, latest_date = hungermaps.get_rows(countryiso3)
+                    dataset, showcase = hungermaps.generate_dataset_and_showcase(
+                        countryiso3, rows, earliest_date, latest_date
+                    )
+                    if not dataset:
+                        continue
+                    dataset.update_from_yaml(join("config", "hdx_dataset_static.yml"))
+                    # ensure markdown has line breaks
+                    dataset["notes"] = dataset["notes"].replace("\n", "  \n")
 
-                        dataset.create_in_hdx(
-                            remove_additional_resources=True,
-                            hxl_update=False,
-                            updated_by_script=updated_by_script,
-                            batch=info["batch"],
-                        )
-                        if showcase:
-                            showcase.create_in_hdx()
-                            showcase.add_dataset(dataset)
+                    dataset.create_in_hdx(
+                        remove_additional_resources=True,
+                        hxl_update=False,
+                        updated_by_script=updated_by_script,
+                        batch=info["batch"],
+                    )
+                    if showcase:
+                        showcase.create_in_hdx()
+                        showcase.add_dataset(dataset)
         state.set(state_dict)
 
 
