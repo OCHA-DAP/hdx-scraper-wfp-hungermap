@@ -42,7 +42,7 @@ def main(save: bool = False, use_saved: bool = False) -> None:
         state_dict = deepcopy(state.get())
         with wheretostart_tempdir_batch(lookup) as info:
             folder = info["folder"]
-            with Download() as downloader:
+            with Download(rate_limit={"calls": 1, "period": 0.1}) as downloader:
                 retriever = Retrieve(
                     downloader, folder, "saved_data", folder, save, use_saved
                 )

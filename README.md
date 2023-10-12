@@ -1,7 +1,7 @@
 ### Collector for WFP's HungerMap Datasets
 [![Build Status](https://github.com/OCHA-DAP/hdx-scraper-wfp-hungermap/actions/workflows/run-python-tests.yml/badge.svg)](https://github.com/OCHA-DAP/hdx-scraper-wfp-hungermap/actions/workflows/run-python-tests.yml) [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-wfp-hungermap/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-wfp-hungermap?branch=main)
 
-This script connects to the [WFP HungerMap API](https://hungermap.wfp.org/) and extracts data creating a dataset for each country in HDX. It makes around 100 reads to WFP's API and 100 read/writes (API calls) to HDX in a half hour period. It is run every week.
+This script connects to the [WFP HungerMap API](https://hungermap.wfp.org/) and extracts data creating a dataset for each country in HDX. It makes around 500 reads to WFP's API and 100 read/writes (API calls) to HDX in a half hour period. It is run every day.
 
 
 ### Usage
