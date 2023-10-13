@@ -9,7 +9,7 @@ from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
 from hdx.facades.infer_arguments import facade
-from hdx.utilities.dateparse import iso_string_from_datetime, now_utc, parse_date
+from hdx.utilities.dateparse import now_utc
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import progress_storing_folder, wheretostart_tempdir_batch
 from hdx.utilities.retriever import Retrieve

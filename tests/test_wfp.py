@@ -71,15 +71,17 @@ class TestHungerMaps:
                 retriever = Retrieve(
                     downloader, folder, input_folder, folder, False, True
                 )
-                today = parse_date("2023-10-12")
+                today = parse_date("2023-10-13")
                 hungermaps = HungerMaps(configuration, retriever, folder, today)
                 state_dict = {"DEFAULT": parse_date("2022-01-01")}
                 countries = hungermaps.get_country_data(state_dict, max_days_ago=5)
                 assert len(countries) == 88
 
-                rows, earliest_date, latest_date = hungermaps.get_rows("AFG")
-                assert len(rows) == 12450
-                assert earliest_date == parse_date("2022-10-12")
+                rows, earliest_date, latest_date = hungermaps.get_rows(
+                    "AFG", max_months_ago=5
+                )
+                assert len(rows) == 5208
+                assert earliest_date == parse_date("2023-05-13")
                 assert latest_date == parse_date("2023-10-12")
 
                 dataset, showcase = hungermaps.generate_dataset_and_showcase(
@@ -107,7 +109,7 @@ class TestHungerMaps:
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
                         },
                     ],
-                    "dataset_date": "[2022-10-12T00:00:00 TO 2023-10-12T23:59:59]",
+                    "dataset_date": "[2023-05-13T00:00:00 TO 2023-10-12T23:59:59]",
                 }
                 resources = dataset.get_resources()
                 assert resources == [
@@ -149,21 +151,21 @@ class TestHungerMaps:
                 }
                 assert state_dict == {
                     "AFG": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "AGO": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "AGO": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "ARM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "BDI": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "BEN": datetime(2022, 1, 11, 0, 0, tzinfo=timezone.utc),
-                    "BFA": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "BFA": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "BGD": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "BOL": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "BTN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "BWA": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "CAF": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "CIV": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "CMR": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "COD": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "COG": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "COL": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "CAF": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "CIV": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "CMR": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "COD": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "COG": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "COL": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "COM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "CPV": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "CUB": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
@@ -176,17 +178,17 @@ class TestHungerMaps:
                     "ETH": datetime(2023, 6, 12, 0, 0, tzinfo=timezone.utc),
                     "FJI": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "GHA": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "GIN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "GIN": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "GMB": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "GNB": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "GTM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "HND": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "HTI": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "GTM": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "HND": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "HTI": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "IDN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "IRN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "IRQ": datetime(2023, 5, 7, 0, 0, tzinfo=timezone.utc),
                     "JOR": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "KEN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "KEN": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "KGZ": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "KHM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "LAO": datetime(2023, 7, 26, 0, 0, tzinfo=timezone.utc),
@@ -197,16 +199,16 @@ class TestHungerMaps:
                     "LSO": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "MAR": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "MDA": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "MDG": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "MLI": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "MDG": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "MLI": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "MMR": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "MNG": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "MOZ": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "MOZ": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "MRT": datetime(2023, 7, 13, 0, 0, tzinfo=timezone.utc),
-                    "MWI": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "NAM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "NER": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "NGA": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "MWI": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "NAM": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "NER": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "NGA": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "NPL": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "PER": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "PHL": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
@@ -216,25 +218,25 @@ class TestHungerMaps:
                     "SDN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "SEN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "SLB": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "SLE": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "SLV": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "SOM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "SLE": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "SLV": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "SOM": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "SSD": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "STP": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "SWZ": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "SYR": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "TCD": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "SYR": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "TCD": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "TGO": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "TJK": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "TLS": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "TUN": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "TZA": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "TZA": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                     "UGA": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "UKR": datetime(2023, 9, 3, 0, 0, tzinfo=timezone.utc),
                     "UZB": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "VNM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "VUT": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "YEM": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "ZMB": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
-                    "ZWE": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
+                    "YEM": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "ZMB": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
+                    "ZWE": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),
                 }

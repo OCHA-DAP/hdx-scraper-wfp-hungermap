@@ -13,7 +13,7 @@ from hdx.data.dataset import Dataset
 from hdx.data.showcase import Showcase
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
-from hdx.utilities.dateparse import parse_date, default_enddate, default_date
+from hdx.utilities.dateparse import default_date, default_enddate, parse_date
 from slugify import slugify
 
 logger = logging.getLogger(__name__)
@@ -75,7 +75,7 @@ class HungerMaps:
 
         return [{"iso3": countryiso3} for countryiso3 in self.countries_data]
 
-    def get_rows(self, countryiso3):
+    def get_rows(self, countryiso3, max_months_ago=12):
         rows = [hxltags]
         countryname = Country.get_country_name_from_iso3(countryiso3)
 
@@ -126,21 +126,44 @@ class HungerMaps:
 
         country_rows = self.countries_data[countryiso3]
         rows.extend([get_row(country_row) for country_row in country_rows])
-        url = self.configuration["country_url"]
-        today = self.today.date().isoformat()
-        one_year_ago = (self.today - relativedelta(years=1)).date().isoformat()
-        url = f"{url}/{countryiso3}/region?date_start={one_year_ago}&date_end={today}"
-        try:
-            all_adminone_data = self.retriever.download_json(url)
-            for adminone_data in all_adminone_data:
-                adminone = adminone_data["region"]["name"]
-                population = adminone_data["region"]["population"]
-                rows.append(get_row(adminone_data, adminone, population))
-        except DownloadError:
-            logger.info(f"No subnational data for {countryname}!")
+        country_url = self.configuration["country_url"]
+        end_date = self.today - relativedelta(days=1)
+        start_date = self.today - relativedelta(months=1)
+
+        def add_subnational_rows(sd, ed):
+            url = f"{country_url}/{countryiso3}/region?date_start={sd.date().isoformat()}&date_end={ed.date().isoformat()}"
+            try:
+                all_adminone_data = self.retriever.download_json(url)
+                for adminone_data in all_adminone_data:
+                    adminone = adminone_data["region"]["name"]
+                    population = adminone_data["region"]["population"]
+                    rows.append(get_row(adminone_data, adminone, population))
+            except DownloadError:
+                logger.info(f"No subnational data for {countryname}!")
+
+        for month in range(0, max_months_ago):
+            add_subnational_rows(start_date, end_date)
+            start_date = start_date - relativedelta(months=1)
+            end_date = end_date - relativedelta(months=1)
+
+        class reverser:
+            def __init__(self, obj):
+                self.obj = obj
+
+            def __eq__(self, other):
+                return other.obj == self.obj
+
+            def __lt__(self, other):
+                return other.obj < self.obj
+
+        rows = sorted(
+            rows, key=lambda x: (x["adminlevel"], reverser(x["date"]), x["adminone"])
+        )
         return rows, earliest_date, latest_date
 
-    def generate_dataset_and_showcase(self, countryiso3, rows, earliest_date, latest_date):
+    def generate_dataset_and_showcase(
+        self, countryiso3, rows, earliest_date, latest_date
+    ):
         name = f"wfp hungermap data for {countryiso3}"
         countryname = Country.get_country_name_from_iso3(countryiso3)
         title = f"{countryname} - HungerMap data"
