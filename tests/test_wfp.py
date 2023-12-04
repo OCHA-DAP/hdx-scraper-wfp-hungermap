@@ -84,7 +84,11 @@ class TestHungerMaps:
                 assert earliest_date == parse_date("2023-05-13")
                 assert latest_date == parse_date("2023-10-12")
 
-                dataset, showcase, bites_disabled = hungermaps.generate_dataset_and_showcase(
+                (
+                    dataset,
+                    showcase,
+                    bites_disabled,
+                ) = hungermaps.generate_dataset_and_showcase(
                     "AFG", rows, earliest_date, latest_date
                 )
                 assert dataset == {
