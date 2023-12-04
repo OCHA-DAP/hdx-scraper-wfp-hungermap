@@ -84,7 +84,7 @@ class TestHungerMaps:
                 assert earliest_date == parse_date("2023-05-13")
                 assert latest_date == parse_date("2023-10-12")
 
-                dataset, showcase = hungermaps.generate_dataset_and_showcase(
+                dataset, showcase, bites_disabled = hungermaps.generate_dataset_and_showcase(
                     "AFG", rows, earliest_date, latest_date
                 )
                 assert dataset == {
@@ -119,14 +119,20 @@ class TestHungerMaps:
                         "format": "csv",
                         "resource_type": "file.upload",
                         "url_type": "upload",
-                    }
+                    },
+                    {
+                        "name": "wfp-hungermap-data-for-afg-long.csv",
+                        "description": "Afghanistan - HungerMap data long format",
+                        "format": "csv",
+                        "resource_type": "file.upload",
+                        "url_type": "upload",
+                    },
                 ]
-                resource = resources[0]
-
-                filename = resource["name"]
-                expected_path = join(fixtures, filename)
-                actual_path = join(folder, filename)
-                assert_files_same(expected_path, actual_path)
+                for resource in resources:
+                    filename = resource["name"]
+                    expected_path = join(fixtures, filename)
+                    actual_path = join(folder, filename)
+                    assert_files_same(expected_path, actual_path)
 
                 assert showcase == {
                     "name": "wfp-hungermap-data-for-afg-showcase",
@@ -149,6 +155,9 @@ class TestHungerMaps:
                         },
                     ],
                 }
+
+                assert bites_disabled == (False, False, True)
+
                 assert state_dict == {
                     "AFG": datetime(2023, 10, 12, 0, 0, tzinfo=timezone.utc),
                     "AGO": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),

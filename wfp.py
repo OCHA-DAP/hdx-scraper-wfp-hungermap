@@ -7,6 +7,7 @@ Reads WFP Hunger Maps data and creates datasets.
 
 """
 import logging
+from copy import copy
 
 from dateutil.relativedelta import relativedelta
 from hdx.data.dataset import Dataset
@@ -35,6 +36,18 @@ hxltags = {
     "health access prevalence": "#indicator+health_access+prevalence",
     "market access people": "#population+market_access",
     "market access prevalence": "#indicator+market_access+prevalence",
+}
+
+long_hxltags = {
+    "countrycode": "#country+code",
+    "countryname": "#country+name",
+    "adminone": "#adm1+name",
+    "adminlevel": "#meta+adminlevel",
+    "date": "#date",
+    "datatype": "#data+type",
+    "indicator name": "#indicator+name",
+    "population": "#population",
+    "prevalence": "#indicator+prevalence",
 }
 
 
@@ -157,7 +170,12 @@ class HungerMaps:
                 return other.obj < self.obj
 
         rows = sorted(
-            rows, key=lambda x: (x["adminlevel"], reverser(x["date"]), x["adminone"])
+            rows,
+            key=lambda x: (
+                x["adminlevel"],
+                reverser(x["date"]),
+                x["adminone"] if x["adminone"] else "ZZZ",
+            ),
         )
         return rows, earliest_date, latest_date
 
@@ -187,7 +205,52 @@ class HungerMaps:
         filename = f"{slugified_name}.csv"
         resourcedata = {"name": filename, "description": title}
         dataset.generate_resource_from_rows(self.folder, filename, rows, resourcedata)
+        long_rows = [long_hxltags]
+        latest_date = default_date
+        latest_row = None
+        for row in rows[1:]:
+            date = parse_date(row["date"])
+            if date > latest_date:
+                latest_date = date
+                latest_row = row
+            base_row = {}
+            for col in row.keys():
+                if col in (
+                    "countrycode",
+                    "countryname",
+                    "adminone",
+                    "adminlevel",
+                    "date",
+                    "datatype",
+                ):
+                    base_row[col] = row[col]
+            population = row["population"]
+            if population:
+                new_row = copy(base_row)
+                new_row["indicator name"] = "total"
+                new_row["population"] = population
+                new_row["prevalence"] = ""
+                long_rows.append(new_row)
 
+            def add_indicator(indicator_name):
+                population = row[f"{indicator_name} people"]
+                if population:
+                    new_row = copy(base_row)
+                    new_row["indicator name"] = indicator_name
+                    new_row["population"] = population
+                    new_row["prevalence"] = row[f"{indicator_name} prevalence"]
+                    long_rows.append(new_row)
+
+            add_indicator("fcs")
+            add_indicator("rcsi")
+            add_indicator("health access")
+            add_indicator("market access")
+
+        filename = f"{slugified_name}-long.csv"
+        resourcedata = {"name": filename, "description": f"{title} long format"}
+        dataset.generate_resource_from_rows(
+            self.folder, filename, long_rows, resourcedata
+        )
         showcase = Showcase(
             {
                 "name": f"{slugified_name}-showcase",
@@ -199,4 +262,19 @@ class HungerMaps:
         )
         showcase.add_tags(tags)
 
-        return dataset, showcase
+        fcs = latest_row.get("fcs prevalence")
+        if fcs:
+            fcs = False
+        else:
+            fcs = True
+        rcsi = latest_row.get("rcsi prevalence")
+        if rcsi:
+            rcsi = False
+        else:
+            rcsi = True
+        health = latest_row.get("health prevalence")
+        if health:
+            health = False
+        else:
+            health = True
+        return dataset, showcase, (fcs, rcsi, health)
