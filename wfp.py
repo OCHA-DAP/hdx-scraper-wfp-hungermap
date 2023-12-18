@@ -200,7 +200,7 @@ class HungerMaps:
         dataset.add_country_location(countryiso3)
         tags = ["hxl", "indicators", "food security"]
         dataset.add_tags(tags)
-        dataset.set_reference_period(earliest_date, latest_date)
+        dataset.set_time_period(earliest_date, latest_date)
 
         filename = f"{slugified_name}.csv"
         resourcedata = {"name": filename, "description": title}
