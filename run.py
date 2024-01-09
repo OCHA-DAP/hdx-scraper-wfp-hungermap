@@ -8,12 +8,14 @@ from copy import deepcopy
 from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
+from hdx.data.dataset import Dataset
 from hdx.facades.infer_arguments import facade
 from hdx.utilities.dateparse import now_utc
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import progress_storing_folder, wheretostart_tempdir_batch
 from hdx.utilities.retriever import Retrieve
 from hdx.utilities.state import State
+from slugify import slugify
 from wfp import HungerMaps
 
 logger = logging.getLogger(__name__)
@@ -76,6 +78,17 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                     if showcase:
                         showcase.create_in_hdx()
                         showcase.add_dataset(dataset)
+
+                dataset_name_prefix = slugify(hungermaps.dataset_name_prefix)
+                for dataset in Dataset.search_in_hdx(fq="organization:wfp"):
+                    name = dataset["name"]
+                    if name.startswith(dataset_name_prefix):
+                        if (
+                            dataset.get_location_iso3s()[0]
+                            not in hungermaps.get_shared_countries()
+                        ):
+                            logger.info(f"Deleting {name}!")
+                            dataset.delete_from_hdx()
         state.set(state_dict)
 
 

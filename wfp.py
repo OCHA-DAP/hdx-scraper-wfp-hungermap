@@ -52,30 +52,33 @@ long_hxltags = {
 
 
 class HungerMaps:
+    dataset_name_prefix = "wfp hungermap data for "
+
     def __init__(self, configuration, retriever, folder, today):
         self.configuration = configuration
         self.retriever = retriever
         self.folder = folder
         self.today = today
+        self.shared_countries = set()
         self.countries_data = {}
 
     def get_country_data(self, state, max_days_ago=365):
         try:
             country_url = self.configuration["country_url"]
-            json = self.retriever.download_json(country_url)
-
-            for country in json["countries"]:
-                countryiso3 = country["country"]["iso3"]
-                date = parse_date(country["date"])
-                if date > state.get(countryiso3, state["DEFAULT"]):
-                    state[countryiso3] = date
-                    self.countries_data[countryiso3] = [country]
-            if self.countries_data:
-                for days_ago in range(1, max_days_ago, 1):
-                    url = f"{country_url}?days_ago={days_ago}"
-                    json = self.retriever.download_json(url)
-                    for country in json["countries"]:
-                        countryiso3 = country["country"]["iso3"]
+            for days_ago in range(0, max_days_ago, 1):
+                url = f"{country_url}?days_ago={days_ago}"
+                json = self.retriever.download_json(url)
+                for country in json["countries"]:
+                    datatype = country["dataType"]
+                    if datatype == "PREDICTION":
+                        continue
+                    countryiso3 = country["country"]["iso3"]
+                    self.shared_countries.add(countryiso3)
+                    date = parse_date(country["date"])
+                    if date > state.get(countryiso3, state["DEFAULT"]):
+                        state[countryiso3] = date
+                        self.countries_data[countryiso3] = [country]
+                    else:
                         current_rows = self.countries_data.get(countryiso3)
                         if not current_rows:
                             continue
@@ -148,6 +151,9 @@ class HungerMaps:
             try:
                 all_adminone_data = self.retriever.download_json(url)
                 for adminone_data in all_adminone_data:
+                    datatype = adminone_data["dataType"]
+                    if datatype == "PREDICTION":
+                        continue
                     adminone = adminone_data["region"]["name"]
                     population = adminone_data["region"]["population"]
                     rows.append(get_row(adminone_data, adminone, population))
@@ -179,10 +185,14 @@ class HungerMaps:
         )
         return rows, earliest_date, latest_date
 
+    @classmethod
+    def get_name(cls, countryiso3):
+        return f"{cls.dataset_name_prefix}{countryiso3}"
+
     def generate_dataset_and_showcase(
         self, countryiso3, rows, earliest_date, latest_date
     ):
-        name = f"wfp hungermap data for {countryiso3}"
+        name = self.get_name(countryiso3)
         countryname = Country.get_country_name_from_iso3(countryiso3)
         title = f"{countryname} - HungerMap data"
         logger.info(f"Creating dataset: {title}")
@@ -195,7 +205,7 @@ class HungerMaps:
         )
         dataset.set_maintainer("196196be-6037-4488-8b71-d786adf4c081")
         dataset.set_organization("3ecac442-7fed-448d-8f78-b385ef6f84e7")
-        dataset.set_expected_update_frequency("Never")
+        dataset.set_expected_update_frequency("As needed")
         dataset.set_subnational(True)
         dataset.add_country_location(countryiso3)
         tags = ["hxl", "indicators", "food security"]
@@ -278,3 +288,6 @@ class HungerMaps:
         else:
             health = True
         return dataset, showcase, (fcs, rcsi, health)
+
+    def get_shared_countries(self):
+        return self.shared_countries
