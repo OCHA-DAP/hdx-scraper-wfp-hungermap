@@ -68,7 +68,10 @@ class HungerMaps:
             for days_ago in range(0, max_days_ago, 1):
                 url = f"{country_url}?days_ago={days_ago}"
                 json = self.retriever.download_json(url)
-                for country in json["countries"]:
+                if json.get("statusCode") != "200":
+                    logger.info(f"No national data available!")
+                    continue
+                for country in json["body"]["countries"]:
                     datatype = country["dataType"]
                     if datatype == "PREDICTION":
                         continue
@@ -149,7 +152,11 @@ class HungerMaps:
         def add_subnational_rows(sd, ed):
             url = f"{country_url}/{countryiso3}/region?date_start={sd.date().isoformat()}&date_end={ed.date().isoformat()}"
             try:
-                all_adminone_data = self.retriever.download_json(url)
+                json = self.retriever.download_json(url)
+                if json.get("statusCode") != "200":
+                    logger.info(f"No subnational data for {countryname}!")
+                    return
+                all_adminone_data = json["body"]
                 for adminone_data in all_adminone_data:
                     datatype = adminone_data["dataType"]
                     if datatype == "PREDICTION":

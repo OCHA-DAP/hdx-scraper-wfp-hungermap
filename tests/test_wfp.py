@@ -59,22 +59,25 @@ class TestHungerMaps:
         return configuration
 
     def test_generate_datasets_and_showcases(
-        self,
-        configuration,
-        input_folder,
-        fixtures,
+            self,
+            configuration,
+            input_folder,
+            fixtures,
     ):
         with temp_dir(
-            "test_wfp_hungermaps", delete_on_success=True, delete_on_failure=False
+                "test_wfp_hungermaps", delete_on_success=True,
+                delete_on_failure=False
         ) as folder:
             with Download() as downloader:
                 retriever = Retrieve(
                     downloader, folder, input_folder, folder, False, True
                 )
                 today = parse_date("2023-12-05")
-                hungermaps = HungerMaps(configuration, retriever, folder, today)
+                hungermaps = HungerMaps(configuration, retriever, folder,
+                                        today)
                 state_dict = {"DEFAULT": parse_date("2022-01-01")}
-                countries = hungermaps.get_country_data(state_dict, max_days_ago=5)
+                countries = hungermaps.get_country_data(state_dict,
+                                                        max_days_ago=5)
                 assert len(countries) == 35
 
                 rows, earliest_date, latest_date = hungermaps.get_rows(
@@ -126,7 +129,7 @@ class TestHungerMaps:
                     },
                     {
                         "description": "Democratic Republic of the Congo - HungerMap data long "
-                        "format",
+                                       "format",
                         "format": "csv",
                         "name": "wfp-hungermap-data-for-cod-long.csv",
                         "resource_type": "file.upload",
