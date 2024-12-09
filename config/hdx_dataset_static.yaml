@@ -34,3 +34,4 @@ methodology_other: |
 dataset_source: "WFP HungerMap"
 package_creator: "mcarans"
 private: False  # has to be True or False
+dataset_preview: no_preview
