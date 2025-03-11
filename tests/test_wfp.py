@@ -80,7 +80,7 @@ class TestHungerMaps:
                                                         max_days_ago=5)
                 assert len(countries) == 35
 
-                rows, earliest_date, latest_date = hungermaps.get_rows(
+                rows, earliest_date, latest_date, has_subnational = hungermaps.get_rows(
                     "COD", max_months_ago=5
                 )
                 assert len(rows) == 3620
@@ -92,8 +92,9 @@ class TestHungerMaps:
                     showcase,
                     bites_disabled,
                 ) = hungermaps.generate_dataset_and_showcase(
-                    "COD", rows, earliest_date, latest_date
+                    "COD", rows, earliest_date, latest_date, has_subnational
                 )
+                assert has_subnational is True
                 assert dataset == {
                     "data_update_frequency": "-2",
                     "dataset_date": "[2023-07-05T00:00:00 TO 2023-11-20T23:59:59]",
@@ -164,7 +165,7 @@ class TestHungerMaps:
                     "url": "https://hungermap.wfp.org/",
                 }
 
-                assert bites_disabled == (False, False, True)
+                assert bites_disabled == (False, False, False)
 
                 assert state_dict == {
                     "AGO": datetime(2023, 10, 13, 0, 0, tzinfo=timezone.utc),

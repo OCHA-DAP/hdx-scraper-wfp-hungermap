@@ -69,7 +69,7 @@ class HungerMaps:
                 url = f"{country_url}?days_ago={days_ago}"
                 json = self.retriever.download_json(url)
                 if json.get("statusCode") != "200":
-                    logger.info(f"No national data available!")
+                    logger.info("No national data available!")
                     continue
                 for country in json["body"]["countries"]:
                     datatype = country["dataType"]
@@ -90,7 +90,7 @@ class HungerMaps:
                         if date != current_date:
                             self.countries_data[countryiso3].append(country)
         except DownloadError:
-            logger.info(f"No national data available!")
+            logger.info("No national data available!")
 
         return [{"iso3": countryiso3} for countryiso3 in self.countries_data]
 
@@ -155,7 +155,7 @@ class HungerMaps:
                 json = self.retriever.download_json(url)
                 if json.get("statusCode") != "200":
                     logger.info(f"No subnational data for {countryname}!")
-                    return
+                    return False
                 all_adminone_data = json["body"]
                 for adminone_data in all_adminone_data:
                     datatype = adminone_data["dataType"]
@@ -166,9 +166,13 @@ class HungerMaps:
                     rows.append(get_row(adminone_data, adminone, population))
             except DownloadError:
                 logger.info(f"No subnational data for {countryname}!")
+                return False
+            return True
 
+        has_subnational = False
         for month in range(0, max_months_ago):
-            add_subnational_rows(start_date, end_date)
+            if add_subnational_rows(start_date, end_date):
+                has_subnational = True
             start_date = start_date - relativedelta(months=1)
             end_date = end_date - relativedelta(months=1)
 
@@ -190,14 +194,14 @@ class HungerMaps:
                 x["adminone"] if x["adminone"] else "ZZZ",
             ),
         )
-        return rows, earliest_date, latest_date
+        return rows, earliest_date, latest_date, has_subnational
 
     @classmethod
     def get_name(cls, countryiso3):
         return f"{cls.dataset_name_prefix}{countryiso3}"
 
     def generate_dataset_and_showcase(
-        self, countryiso3, rows, earliest_date, latest_date
+        self, countryiso3, rows, earliest_date, latest_date, has_subnational
     ):
         name = self.get_name(countryiso3)
         countryname = Country.get_country_name_from_iso3(countryiso3)
@@ -213,7 +217,7 @@ class HungerMaps:
         dataset.set_maintainer("196196be-6037-4488-8b71-d786adf4c081")
         dataset.set_organization("3ecac442-7fed-448d-8f78-b385ef6f84e7")
         dataset.set_expected_update_frequency("As needed")
-        dataset.set_subnational(True)
+        dataset.set_subnational(has_subnational)
         dataset.add_country_location(countryiso3)
         tags = ["hxl", "indicators", "food security"]
         dataset.add_tags(tags)
@@ -272,7 +276,7 @@ class HungerMaps:
             {
                 "name": f"{slugified_name}-showcase",
                 "title": f"{title} showcase",
-                "notes": f"HungerMap LIVE",
+                "notes": "HungerMap LIVE",
                 "url": "https://hungermap.wfp.org/",
                 "image_url": "https://www.wfp.org/sites/default/files/2020-11/migrated-story-hero-images/1%2AwHonqWsryfHjnj3FRQS_xA.png",
             }
@@ -289,12 +293,12 @@ class HungerMaps:
             rcsi = False
         else:
             rcsi = True
-        health = latest_row.get("health prevalence")
-        if health:
-            health = False
+        market_access = latest_row.get("market access prevalence")
+        if market_access:
+            market_access = False
         else:
-            health = True
-        return dataset, showcase, (fcs, rcsi, health)
+            market_access = True
+        return dataset, showcase, (fcs, rcsi, market_access)
 
     def get_shared_countries(self):
         return self.shared_countries

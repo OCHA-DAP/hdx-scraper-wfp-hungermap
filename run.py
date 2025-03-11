@@ -50,17 +50,17 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                 )
                 today = now_utc()
                 hungermaps = HungerMaps(configuration, retriever, folder, today)
-                countries = hungermaps.get_country_data(state_dict)
+                countries = hungermaps.get_country_data(state_dict, max_days_ago=10)
                 logger.info(f"Number of datasets: {len(countries)}")
                 for _, countryinfo in progress_storing_folder(info, countries, "iso3"):
                     countryiso3 = countryinfo["iso3"]
-                    rows, earliest_date, latest_date = hungermaps.get_rows(countryiso3)
+                    rows, earliest_date, latest_date, has_subnational = hungermaps.get_rows(countryiso3)
                     (
                         dataset,
                         showcase,
                         bites_disabled,
                     ) = hungermaps.generate_dataset_and_showcase(
-                        countryiso3, rows, earliest_date, latest_date
+                        countryiso3, rows, earliest_date, latest_date, has_subnational
                     )
                     if not dataset:
                         continue
@@ -68,7 +68,7 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                     # ensure markdown has line breaks
                     dataset["notes"] = dataset["notes"].replace("\n", "  \n")
 
-                    # dataset.generate_quickcharts(bites_disabled=bites_disabled)
+                    dataset.generate_quickcharts(bites_disabled=bites_disabled)
                     dataset.create_in_hdx(
                         remove_additional_resources=True,
                         hxl_update=False,
