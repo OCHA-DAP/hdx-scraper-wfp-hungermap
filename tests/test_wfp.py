@@ -3,84 +3,39 @@
 Unit tests for WFP ADAM.
 
 """
+
 from datetime import datetime, timezone
 from os.path import join
 
-import pytest
-from hdx.api.configuration import Configuration
-from hdx.api.locations import Locations
-from hdx.data.vocabulary import Vocabulary
-from hdx.location.country import Country
+from hdx.scraper.wfp.hungermap.pipeline import Pipeline
 from hdx.utilities.compare import assert_files_same
 from hdx.utilities.dateparse import parse_date
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
-from hdx.utilities.useragent import UserAgent
-from wfp import HungerMaps
 
 
-class TestHungerMaps:
-    @pytest.fixture(scope="function")
-    def fixtures(self):
-        return join("tests", "fixtures")
-
-    @pytest.fixture(scope="function")
-    def input_folder(self, fixtures):
-        return join(fixtures, "input")
-
-    @pytest.fixture(scope="function")
-    def configuration(self):
-        Configuration._create(
-            hdx_read_only=True,
-            user_agent="test",
-            project_config_yaml=join("config", "project_configuration.yaml"),
-        )
-        UserAgent.set_global("test")
-        Country.countriesdata(use_live=False)
-        Locations.set_validlocations(
-            [
-                {"name": "cod", "title": "cod"},
-            ]
-        )
-        configuration = Configuration.read()
-        tags = (
-            "hxl",
-            "indicators",
-            "food security",
-        )
-        Vocabulary._tags_dict = {tag: {"Action to Take": "ok"} for tag in tags}
-        tags = [{"name": tag} for tag in tags]
-        Vocabulary._approved_vocabulary = {
-            "tags": tags,
-            "id": "4e61d464-4943-4e97-973a-84673c1aaa87",
-            "name": "approved",
-        }
-        return configuration
-
+class TestPipeline:
     def test_generate_datasets_and_showcases(
-            self,
-            configuration,
-            input_folder,
-            fixtures,
+        self,
+        configuration,
+        input_folder,
+        fixtures,
     ):
         with temp_dir(
-                "test_wfp_hungermaps", delete_on_success=True,
-                delete_on_failure=False
+            "test_wfp_hungermaps", delete_on_success=True, delete_on_failure=False
         ) as folder:
             with Download() as downloader:
                 retriever = Retrieve(
                     downloader, folder, input_folder, folder, False, True
                 )
                 today = parse_date("2023-12-05")
-                hungermaps = HungerMaps(configuration, retriever, folder,
-                                        today)
+                pipeline = Pipeline(configuration, retriever, folder, today)
                 state_dict = {"DEFAULT": parse_date("2022-01-01")}
-                countries = hungermaps.get_country_data(state_dict,
-                                                        max_days_ago=5)
+                countries = pipeline.get_country_data(state_dict, max_days_ago=5)
                 assert len(countries) == 35
 
-                rows, earliest_date, latest_date, has_subnational = hungermaps.get_rows(
+                rows, earliest_date, latest_date, has_subnational = pipeline.get_rows(
                     "COD", max_months_ago=5
                 )
                 assert len(rows) == 3620
@@ -91,7 +46,7 @@ class TestHungerMaps:
                     dataset,
                     showcase,
                     bites_disabled,
-                ) = hungermaps.generate_dataset_and_showcase(
+                ) = pipeline.generate_dataset_and_showcase(
                     "COD", rows, earliest_date, latest_date, has_subnational
                 )
                 assert has_subnational is True
@@ -130,7 +85,7 @@ class TestHungerMaps:
                     },
                     {
                         "description": "Democratic Republic of the Congo - HungerMap data long "
-                                       "format",
+                        "format",
                         "format": "csv",
                         "name": "wfp-hungermap-data-for-cod-long.csv",
                         "resource_type": "file.upload",
