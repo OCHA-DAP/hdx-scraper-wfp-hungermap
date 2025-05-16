@@ -6,7 +6,7 @@ license_id: "cc-by-sa"
 subnational: True
 caveats: ""
 methodology: "Other"
-methodology_other: | 
+methodology_other: |
   WFP’s Hunger Monitoring Unit in the Research, Assessment and Monitoring Division conducts real-time food security monitoring to track the latest food security trends. In areas where limited or no data is available, we use machine learning-based predictive models to estimate the food security situation.
 
   WFP conducts continuous food security monitoring via computer assisted telephone interviewing (CATI) through call centers. Data is collected on a rolling basis, spread evenly over a past 28/30 calendar days or over a three-month period. The main advantage of this approach is that data is available more frequently and processed daily through automated statistical engines. Daily updates are then produced showing a snapshot of the current food security situation (with a slight time lag of 2-4 days to ensure data quality) over the past 28/30 calendar days.

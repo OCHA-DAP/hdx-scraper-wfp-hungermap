@@ -6,16 +6,18 @@ WFP Hunger Maps:
 Reads WFP Hunger Maps data and creates datasets.
 
 """
+
 import logging
 from copy import copy
 
 from dateutil.relativedelta import relativedelta
+from slugify import slugify
+
 from hdx.data.dataset import Dataset
 from hdx.data.showcase import Showcase
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dateparse import default_date, default_enddate, parse_date
-from slugify import slugify
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +53,7 @@ long_hxltags = {
 }
 
 
-class HungerMaps:
+class Pipeline:
     dataset_name_prefix = "wfp hungermap data for "
 
     def __init__(self, configuration, retriever, folder, today):
