@@ -89,7 +89,12 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                     # ensure markdown has line breaks
                     dataset["notes"] = dataset["notes"].replace("\n", "  \n")
 
-                    dataset.generate_quickcharts(bites_disabled=bites_disabled)
+                    dataset.generate_quickcharts(
+                        bites_disabled=bites_disabled,
+                        path=script_dir_plus_file(
+                            join("config", "hdx_resource_view_static.yaml"), main
+                        ),
+                    )
                     dataset.create_in_hdx(
                         remove_additional_resources=True,
                         hxl_update=False,
