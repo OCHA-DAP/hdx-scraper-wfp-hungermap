@@ -65,7 +65,7 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                 )
                 today = now_utc()
                 pipeline = Pipeline(configuration, retriever, folder, today)
-                countries = pipeline.get_country_data(state_dict, max_days_ago=10)
+                countries = pipeline.get_country_data(state_dict)
                 logger.info(f"Number of datasets: {len(countries)}")
                 for _, countryinfo in progress_storing_folder(info, countries, "iso3"):
                     countryiso3 = countryinfo["iso3"]
