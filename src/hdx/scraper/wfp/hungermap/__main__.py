@@ -11,6 +11,7 @@ from os.path import expanduser, join
 from slugify import slugify
 
 from hdx.api.configuration import Configuration
+from hdx.api.utilities.hdx_state import HDXState
 from hdx.data.dataset import Dataset
 from hdx.data.user import User
 from hdx.facades.infer_arguments import facade
@@ -24,7 +25,6 @@ from hdx.utilities.path import (
     wheretostart_tempdir_batch,
 )
 from hdx.utilities.retriever import Retrieve
-from hdx.utilities.state import State
 
 logger = logging.getLogger(__name__)
 
@@ -51,21 +51,22 @@ def main(save: bool = False, use_saved: bool = False) -> None:
             "API Token does not give access to OCHA HPC-Tools organisation!"
         )
     configuration = Configuration.read()
-    with State(
-        "metric_dates.txt",
-        State.dates_str_to_country_date_dict,
-        State.country_date_dict_to_dates_str,
-    ) as state:
-        state_dict = deepcopy(state.get())
-        with wheretostart_tempdir_batch(lookup) as info:
-            folder = info["folder"]
+    with wheretostart_tempdir_batch(lookup) as info:
+        folder = info["folder"]
+        with HDXState(
+            "pipeline-state-wfp-hungermap",
+            folder,
+            HDXState.dates_str_to_country_date_dict,
+            HDXState.country_date_dict_to_dates_str,
+        ) as state:
+            state_dict = deepcopy(state.get())
             with Download(rate_limit={"calls": 1, "period": 0.1}) as downloader:
                 retriever = Retrieve(
                     downloader, folder, "saved_data", folder, save, use_saved
                 )
                 today = now_utc()
                 pipeline = Pipeline(configuration, retriever, folder, today)
-                countries = pipeline.get_country_data(state_dict)
+                countries = pipeline.get_country_data(state_dict, max_days_ago=1)
                 logger.info(f"Number of datasets: {len(countries)}")
                 for _, countryinfo in progress_storing_folder(info, countries, "iso3"):
                     countryiso3 = countryinfo["iso3"]
@@ -115,7 +116,7 @@ def main(save: bool = False, use_saved: bool = False) -> None:
                         ):
                             logger.info(f"Deleting {name}!")
                             dataset.delete_from_hdx()
-        state.set(state_dict)
+            state.set(state_dict)
 
 
 if __name__ == "__main__":
