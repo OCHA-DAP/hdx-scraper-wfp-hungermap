@@ -55,6 +55,7 @@ def main(save: bool = False, use_saved: bool = False) -> None:
             folder,
             HDXState.dates_str_to_country_date_dict,
             HDXState.country_date_dict_to_dates_str,
+            configuration,
         ) as state:
             state_dict = deepcopy(state.get())
             with Download(rate_limit={"calls": 1, "period": 0.1}) as downloader:
