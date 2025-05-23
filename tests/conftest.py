@@ -5,6 +5,7 @@ import pytest
 from hdx.api.configuration import Configuration
 from hdx.api.locations import Locations
 from hdx.data.vocabulary import Vocabulary
+from hdx.location.country import Country
 from hdx.scraper.wfp.hungermap.pipeline import Pipeline
 from hdx.utilities.path import script_dir_plus_file
 from hdx.utilities.useragent import UserAgent
@@ -35,6 +36,7 @@ def configuration():
             {"name": "cod", "title": "cod"},
         ]
     )
+    Country.countriesdata(use_live=False)
     tags = (
         "hxl",
         "indicators",
