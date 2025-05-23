@@ -44,13 +44,10 @@ def main(save: bool = False, use_saved: bool = False) -> None:
     """
 
     logger.info(f"##### {lookup} version {__version__} ####")
-    if not User.check_current_user_organization_access(
-        "3ecac442-7fed-448d-8f78-b385ef6f84e7", "create_dataset"
-    ):
-        raise PermissionError(
-            "API Token does not give access to OCHA HPC-Tools organisation!"
-        )
     configuration = Configuration.read()
+    User.check_current_user_write_access(
+        "3ecac442-7fed-448d-8f78-b385ef6f84e7", configuration=configuration
+    )
     with wheretostart_tempdir_batch(lookup) as info:
         folder = info["folder"]
         with HDXState(
