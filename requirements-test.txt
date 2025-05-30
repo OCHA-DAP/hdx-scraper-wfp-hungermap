@@ -27,11 +27,11 @@ ckanapi==4.8
     # via
     #   -c requirements.txt
     #   hdx-python-api
-click==8.1.8
+click==8.2.1
     # via
     #   -c requirements.txt
     #   typer
-coverage==7.8.1
+coverage==7.8.2
     # via pytest-cov
 defopt==6.4.0
     # via
@@ -62,7 +62,7 @@ frictionless==5.18.1
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-hdx-python-api==6.4.3
+hdx-python-api==6.4.4
     # via
     #   -c requirements.txt
     #   hdx-scraper-wfp-hungermap (pyproject.toml)
@@ -112,7 +112,7 @@ jsonpath-ng==1.7.0
     # via
     #   -c requirements.txt
     #   libhxl
-jsonschema==4.23.0
+jsonschema==4.24.0
     # via
     #   -c requirements.txt
     #   frictionless
@@ -262,11 +262,15 @@ rpds-py==0.25.1
     #   -c requirements.txt
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.10
+ruamel-yaml==0.18.11
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-setuptools==80.8.0
+ruamel-yaml-clib==0.2.12
+    # via
+    #   -c requirements.txt
+    #   ruamel-yaml
+setuptools==80.9.0
     # via
     #   -c requirements.txt
     #   ckanapi
@@ -317,7 +321,7 @@ typeguard==4.4.2
     # via
     #   -c requirements.txt
     #   inflect
-typer==0.15.4
+typer==0.16.0
     # via
     #   -c requirements.txt
     #   frictionless
