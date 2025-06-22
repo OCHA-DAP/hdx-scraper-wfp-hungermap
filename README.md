@@ -1,4 +1,4 @@
-# Collector for wfp-hungermap Datasets
+# Collector for WFP Hungermap Datasets
 [![Build Status](https://github.com/OCHA-DAP/hdx-scraper-wfp-hungermap/actions/workflows/run-python-tests.yaml/badge.svg)](https://github.com/OCHA-DAP/hdx-scraper-wfp-hungermap/actions/workflows/run-python-tests.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-wfp-hungermap/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-wfp-hungermap?branch=main)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
