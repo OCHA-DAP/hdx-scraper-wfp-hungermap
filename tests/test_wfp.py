@@ -80,16 +80,12 @@ class TestPipeline:
                         "description": "Democratic Republic of the Congo - HungerMap data",
                         "format": "csv",
                         "name": "wfp-hungermap-data-for-cod.csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "description": "Democratic Republic of the Congo - HungerMap data long "
                         "format",
                         "format": "csv",
                         "name": "wfp-hungermap-data-for-cod-long.csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]
                 for resource in resources:
