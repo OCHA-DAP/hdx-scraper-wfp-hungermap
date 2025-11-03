@@ -300,7 +300,7 @@ sphinxcontrib-napoleon==0.7
     # via
     #   -c requirements.txt
     #   defopt
-structlog==25.4.0
+structlog==25.5.0
     # via
     #   -c requirements.txt
     #   libhxl

@@ -167,7 +167,7 @@ six==1.17.0
     #   sphinxcontrib-napoleon
 sphinxcontrib-napoleon==0.7
     # via defopt
-structlog==25.4.0
+structlog==25.5.0
     # via libhxl
 tableschema-to-template==0.0.13
     # via hdx-python-utilities
