@@ -38,7 +38,6 @@ def configuration():
     )
     Country.countriesdata(use_live=False)
     tags = (
-        "hxl",
         "indicators",
         "food security",
     )

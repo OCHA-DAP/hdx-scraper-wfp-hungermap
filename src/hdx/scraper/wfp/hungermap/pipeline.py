@@ -22,37 +22,6 @@ from hdx.utilities.dateparse import default_date, default_enddate, parse_date
 logger = logging.getLogger(__name__)
 
 
-hxltags = {
-    "countrycode": "#country+code",
-    "countryname": "#country+name",
-    "adminone": "#adm1+name",
-    "adminlevel": "#meta+adminlevel",
-    "population": "#population+total",
-    "date": "#date",
-    "datatype": "#data+type",
-    "fcs people": "#population+fcs",
-    "fcs prevalence": "#indicator+fcs+prevalence",
-    "rcsi people": "#population+rcsi",
-    "rcsi prevalence": "#indicator+rcsi+prevalence",
-    "health access people": "#population+health_access",
-    "health access prevalence": "#indicator+health_access+prevalence",
-    "market access people": "#population+market_access",
-    "market access prevalence": "#indicator+market_access+prevalence",
-}
-
-long_hxltags = {
-    "countrycode": "#country+code",
-    "countryname": "#country+name",
-    "adminone": "#adm1+name",
-    "adminlevel": "#meta+adminlevel",
-    "date": "#date",
-    "datatype": "#data+type",
-    "indicator name": "#indicator+name",
-    "population": "#population",
-    "prevalence": "#indicator+prevalence",
-}
-
-
 class Pipeline:
     dataset_name_prefix = "wfp hungermap data for "
 
@@ -97,7 +66,7 @@ class Pipeline:
         return [{"iso3": countryiso3} for countryiso3 in self.countries_data]
 
     def get_rows(self, countryiso3, max_months_ago=12):
-        rows = [hxltags]
+        rows = []
         countryname = Country.get_country_name_from_iso3(countryiso3)
 
         earliest_date = default_enddate
@@ -221,17 +190,17 @@ class Pipeline:
         dataset.set_expected_update_frequency("As needed")
         dataset.set_subnational(has_subnational)
         dataset.add_country_location(countryiso3)
-        tags = ["hxl", "indicators", "food security"]
+        tags = ["indicators", "food security"]
         dataset.add_tags(tags)
         dataset.set_time_period(earliest_date, latest_date)
 
         filename = f"{slugified_name}.csv"
         resourcedata = {"name": filename, "description": title}
-        dataset.generate_resource_from_rows(self.folder, filename, rows, resourcedata)
-        long_rows = [long_hxltags]
+        dataset.generate_resource(self.folder, filename, rows, resourcedata)
+        long_rows = []
         latest_date = default_date
         latest_row = None
-        for row in rows[1:]:
+        for row in rows:
             date = parse_date(row["date"])
             if date > latest_date:
                 latest_date = date
@@ -271,9 +240,7 @@ class Pipeline:
 
         filename = f"{slugified_name}-long.csv"
         resourcedata = {"name": filename, "description": f"{title} long format"}
-        dataset.generate_resource_from_rows(
-            self.folder, filename, long_rows, resourcedata
-        )
+        dataset.generate_resource(self.folder, filename, long_rows, resourcedata)
         showcase = Showcase(
             {
                 "name": f"{slugified_name}-showcase",

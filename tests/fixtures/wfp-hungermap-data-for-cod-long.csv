@@ -1,5 +1,4 @@
 countrycode,countryname,adminone,adminlevel,date,datatype,indicator name,population,prevalence
-#country+code,#country+name,#adm1+name,#meta+adminlevel,#date,#data+type,#indicator+name,#population,#indicator+prevalence
 COD,Democratic Republic of the Congo,,national,2023-10-13,SURVEY,fcs,43408075,0.409815589440035
 COD,Democratic Republic of the Congo,,national,2023-10-13,SURVEY,rcsi,41161144,0.38860231170896714
 COD,Democratic Republic of the Congo,,national,2023-10-13,SURVEY,health access,52560624,0.7529126864955522

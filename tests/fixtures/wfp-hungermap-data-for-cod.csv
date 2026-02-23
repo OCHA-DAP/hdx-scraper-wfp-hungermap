@@ -1,5 +1,4 @@
 countrycode,countryname,adminone,adminlevel,population,date,datatype,fcs people,fcs prevalence,rcsi people,rcsi prevalence,health access people,health access prevalence,market access people,market access prevalence
-#country+code,#country+name,#adm1+name,#meta+adminlevel,#population+total,#date,#data+type,#population+fcs,#indicator+fcs+prevalence,#population+rcsi,#indicator+rcsi+prevalence,#population+health_access,#indicator+health_access+prevalence,#population+market_access,#indicator+market_access+prevalence
 COD,Democratic Republic of the Congo,,national,,2023-10-13,SURVEY,43408075,0.409815589440035,41161144,0.38860231170896714,52560624,0.7529126864955522,49057800,0.46315463709531807
 COD,Democratic Republic of the Congo,,national,,2023-10-12,SURVEY,43097294,0.406881506352919,40777494,0.3849802740242366,52845154,0.7527586446406808,49213409,0.46462374149714136
 COD,Democratic Republic of the Congo,,national,,2023-10-11,SURVEY,43322508,0.40900775148496293,40769839,0.38490800619839344,52818393,0.7537866177302063,49285001,0.4652996414922273

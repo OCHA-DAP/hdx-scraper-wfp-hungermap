@@ -38,7 +38,7 @@ class TestPipeline:
                 rows, earliest_date, latest_date, has_subnational = pipeline.get_rows(
                     "COD", max_months_ago=5
                 )
-                assert len(rows) == 3620
+                assert len(rows) == 3619
                 assert earliest_date == parse_date("2023-07-05")
                 assert latest_date == parse_date("2023-11-20")
 
@@ -59,10 +59,6 @@ class TestPipeline:
                     "owner_org": "3ecac442-7fed-448d-8f78-b385ef6f84e7",
                     "subnational": "1",
                     "tags": [
-                        {
-                            "name": "hxl",
-                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
-                        },
                         {
                             "name": "indicators",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
@@ -99,10 +95,6 @@ class TestPipeline:
                     "name": "wfp-hungermap-data-for-cod-showcase",
                     "notes": "HungerMap LIVE",
                     "tags": [
-                        {
-                            "name": "hxl",
-                            "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
-                        },
                         {
                             "name": "indicators",
                             "vocabulary_id": "4e61d464-4943-4e97-973a-84673c1aaa87",
